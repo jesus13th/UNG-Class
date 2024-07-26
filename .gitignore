@@ -1,0 +1,12 @@
+.vs/
+.vsconfig
+Library/
+Temp/
+UNG.apk
+UNG_BurstDebugInformation_DoNotShip/
+WebBuild/
+obj/
+tarea.rar
+tarea/
+Logs
+build/
