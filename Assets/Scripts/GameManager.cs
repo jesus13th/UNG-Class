@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
     [Header("GameOver")]
     [SerializeField] private string mainMenuScene;
     [SerializeField] private CharacterMovement player;
+    [SerializeField] private Vector2 horizontalLimits;
     [SerializeField] private float bottomLimit = -5f;
 
     [Header("Coins")]
@@ -38,6 +39,10 @@ public class GameManager : MonoBehaviour {
         if (player.transform.position.y < -5) {
             GameOver();
         }
+
+        player.transform.position = new Vector3(
+            Mathf.Clamp(player.transform.position.x, horizontalLimits.x, horizontalLimits.y),
+            player.transform.position.y, player.transform.position.z);
     }
     public void GrabCoin(GameObject g) {
         coins++;

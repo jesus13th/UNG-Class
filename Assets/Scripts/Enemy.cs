@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 
 using UnityEngine;
@@ -9,6 +10,7 @@ public class Enemy : MonoBehaviour {
     [Header("Health")]
     [SerializeField] private float health = 1f;
     [SerializeField] private string characterTag;
+    [SerializeField] private string bulletTag;
 
     private float velocityCurrent;
     [SerializeField] private float velocityTarget = 2.5f;
@@ -43,13 +45,24 @@ public class Enemy : MonoBehaviour {
     }
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.CompareTag(characterTag)) {
-            Debug.Log(collision.contacts.First().normal);
-            if (Mathf.Abs(collision.contacts.First().normal.x) > 0.8f || collision.contacts.First().normal.y > 0.8f) {
-                collision.gameObject.GetComponent<CharacterMovement>().ApplyDamage(1);
+            if (canDamagePlayer && Mathf.Abs(collision.contacts.First().normal.x) > 0.8f || collision.contacts.First().normal.y > 0.8f) {
+                StartCoroutine(DamagePlayer(collision));
             } else if (collision.contacts.First().normal.y < -0.8f) {
                 ApplyDamage(1);
             }
         }
+        if (!string.IsNullOrEmpty(bulletTag) && collision.collider.CompareTag(bulletTag)) {
+            ApplyDamage(1);
+            Destroy(collision.gameObject);
+        }
+    }
+    private bool canDamagePlayer = true;
+    private IEnumerator DamagePlayer(Collision2D collision) {
+        collision.gameObject.GetComponent<CharacterMovement>().ApplyDamage(1);
+        velocityTarget *= -1;
+        canDamagePlayer = false;
+        yield return new WaitForSeconds(2f);
+        canDamagePlayer = true;
     }
     protected void ApplyDamage(float value) {
         health -= value;
